@@ -21,6 +21,7 @@ class ObjectDescription < LanguageDescription
   configure :length, [:short, :long]
   configure :size, [:large, :small]
   configure :width, [:wide, :narrow]
+  configure :terrain_type, [:rocky, :grassy]
 
   def road
     RoadDescription.new capture_properties
@@ -48,6 +49,10 @@ class ObjectConnector
     self
   end
 
+  def field
+    properties[:type] = Field
+    self
+  end
 
   def find
     selection = objects

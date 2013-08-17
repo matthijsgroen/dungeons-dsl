@@ -3,6 +3,7 @@ require './map_object'
 class FieldDescription < LanguageDescription
 
   configure :road_type, [:across]
+  configure :field_type, [:rocky, :grassy]
 
   def initialize(properties)
     @properties = convert_properties properties
@@ -33,6 +34,7 @@ class FieldDescription < LanguageDescription
     }
     p[:size] = 6 + rand(10) if properties[:size] == :small
     p[:size] = 15 + rand(20) if properties[:size] == :large
+    p[:field_type] = properties[:terrain_type]
     p
   end
 end
@@ -45,6 +47,7 @@ class Field < MapObject
   end
 
   def create
+    field_type = configuration[:field_type] || :grassy
     pos = configuration[:start_position]
     direction = configuration[:start_direction]
 
@@ -53,8 +56,8 @@ class Field < MapObject
     f.times.each do |index|
       pos = move_direction(pos, direction)
       base = (f/2) - (index - (f/2)).abs + 1
-      place_tiles(pos, rotate_direction(direction, 90), base + rand(f/4), :field)
-      place_tiles(pos, rotate_direction(direction, -90), base + rand(f/4), :field)
+      place_tiles(pos, rotate_direction(direction, 90), base + rand(f/4), field_type)
+      place_tiles(pos, rotate_direction(direction, -90), base + rand(f/4), field_type)
     end
 
     ## Add road if indicated
@@ -73,8 +76,6 @@ class Field < MapObject
     configuration[:end_direction] = road.configuration[:end_direction]
     self
   end
-
-  private
 
   attr_reader :configuration
 

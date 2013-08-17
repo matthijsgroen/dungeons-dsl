@@ -13,9 +13,19 @@ class RoadDescription < LanguageDescription
     Road.create(world, @properties)
   end
 
+  def connected(connector)
+    object = connector.find
+    @properties[:start] = object.configuration[:end]
+    case direction = object.configuration[:end_direction]
+    when :north, :south then @properties[:vertical_direction] = direction
+    when :west, :east then @properties[:horizontal_direction] = direction
+    end
+    self
+  end
+
   def bank
     @properties[:bank] = {
-      width: :small
+      width: :narrow
     }.merge capture_properties
     @capture_properties = {}
     self
@@ -83,7 +93,7 @@ class Road < MapObject
 
   def pick_bank_width
     {
-      small: rand(3),
+      narrow: rand(3),
       wide: 2 + rand(4)
     }[configuration[:bank][:width]]
   end
