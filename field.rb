@@ -52,12 +52,25 @@ class Field < MapObject
 
     f.times.each do |index|
       pos = move_direction(pos, direction)
-
-      base = (f/2) - (index - (f/2)).abs
-
+      base = (f/2) - (index - (f/2)).abs + 1
       place_tiles(pos, rotate_direction(direction, 90), base + rand(f/4), :field)
       place_tiles(pos, rotate_direction(direction, -90), base + rand(f/4), :field)
     end
+
+    ## Add road if indicated
+    road_configuration = {
+      start: configuration[:start_position],
+      length: f,
+      twist_factor: 2
+    }
+    case direction
+    when :north, :south then road_configuration[:vertical_direction] = direction
+    when :east, :west then road_configuration[:horizontal_direction] = direction
+    end
+
+    road = Road.create world, road_configuration
+    configuration[:end] = road.configuration[:end]
+    configuration[:end_direction] = road.configuration[:end_direction]
     self
   end
 

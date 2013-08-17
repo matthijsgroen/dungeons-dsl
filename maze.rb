@@ -12,7 +12,7 @@ srand seed
 
 require './there_is'
 
-there is.a.long.wide.road.with.a.wide.bank
+there is.a.road.with.a.wide.bank
 there is.a.large.field.with.a.road.across.connected to.this.road
 
 world.render

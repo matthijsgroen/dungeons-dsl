@@ -41,7 +41,7 @@ class Road < MapObject
       vertical_direction: [:south, :north].sample,
       horizontal_direction: [:east, :west].sample
     }.merge configuration
-    @configuration[:twist_factor] ||= 1 + rand(@configuration[:length])
+    @configuration[:twist_factor] ||= 1 + rand(@configuration[:length] / 4)
   end
 
   def create

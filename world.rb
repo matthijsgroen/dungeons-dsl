@@ -28,7 +28,7 @@ class World
   TILE_TYPES = {
     road: '#',
     bank: '.',
-    field: ',',
+    field: '.',
     marker: '$'
   }
 
