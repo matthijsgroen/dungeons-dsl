@@ -1,34 +1,63 @@
 require './world'
 require './language'
 require './road'
+require './field'
 
 def there(object_description)
-  object_description.create world
+  @objects ||= []
+  @objects << object_description.create(world)
 end
 
 def is
   ObjectDescription.new
 end
 
+def to
+  ObjectConnector.new @objects
+end
+
 class ObjectDescription < LanguageDescription
 
-  attr_reader :properties
+  configure :length, [:short, :long]
+  configure :size, [:large, :small]
+  configure :width, [:wide, :narrow]
 
-  def initialize
+  def road
+    RoadDescription.new capture_properties
+  end
+
+  def field
+    FieldDescription.new capture_properties
+  end
+end
+
+class ObjectConnector
+
+  def initialize objects
+    @objects = objects
     @properties = {}
   end
 
-  def short
-    @properties[:length] = :short
-    self
-  end
-
-  def long
-    @properties[:length] = :long
+  def this
+    properties[:position] = :last
     self
   end
 
   def road
-    RoadDescription.new properties
+    properties[:type] = Road
+    self
   end
+
+
+  def find
+    selection = objects
+    selection = selection.select { |i| i.is_a? properties[:type] } if properties[:type]
+
+    case properties[:position]
+    when :last then return selection.last
+    end
+  end
+
+  private
+  attr_reader :properties, :objects
 end

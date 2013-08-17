@@ -12,16 +12,8 @@ srand seed
 
 require './there_is'
 
-#area1 = area <<-AREA
-  #Given there is a road
-  #And the player stands at the beginning of the road
-  #And the road is surrounded by some bushes and trees
-  #And at the end of the road, there is a large field.
-  #And a connected road leads through this field
-  #AREA
-#area1.show
-
-there is.a.road.with.a.bank
+there is.a.long.wide.road.with.a.wide.bank
+there is.a.large.field.with.a.road.across.connected to.this.road
 
 world.render
 
