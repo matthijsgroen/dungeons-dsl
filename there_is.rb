@@ -1,71 +1,34 @@
 require './world'
+require './language'
+require './road'
 
-def there
-  MapItemCreator.new world
+def there(object_description)
+  object_description.create world
 end
 
-class MapItemCreator
+def is
+  ObjectDescription.new
+end
 
-  def initialize world
-    @world = world
-    @configuration = {}
-  end
+class ObjectDescription < LanguageDescription
 
-  def is
-    self
-  end
+  attr_reader :properties
 
-  def a
-    self
+  def initialize
+    @properties = {}
   end
 
   def short
-    @configuration[:length] = 5 + rand(10)
+    @properties[:length] = :short
     self
   end
 
   def long
-    @configuration[:length] = 25 + rand(20)
+    @properties[:length] = :long
     self
   end
 
   def road
-    Road.new(@world, @configuration)
+    RoadDescription.new properties
   end
-
-end
-
-class Road
-
-  def initialize world, configuration
-    @world = world
-    @configuration = {
-      start: [rand(500), rand(500)],
-      length: 10 + rand(30),
-      vertical_direction: [1, -1].sample,
-      horizontal_direction: [1, -1].sample
-    }.merge configuration
-    @configuration[:twist_factor] ||= 1 + rand(@configuration[:length])
-    draw_road
-  end
-
-  private
-  attr_reader :world, :configuration
-  def draw_road
-    x = configuration[:start][0]
-    y = configuration[:start][1]
-    direction = [:x, :y].sample
-    world.place_tile(x, y, :road)
-    configuration[:length].times do |index|
-      if direction == :x
-        x += configuration[:horizontal_direction]
-      else
-        y += configuration[:vertical_direction]
-      end
-      direction = [:x, :y].sample if index % configuration[:twist_factor] == 0
-
-      world.place_tile(x, y, :road)
-    end
-  end
-
 end

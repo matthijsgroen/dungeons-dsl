@@ -21,7 +21,7 @@ require './there_is'
   #AREA
 #area1.show
 
-@road = there.is.a.road
+there is.a.road.with.a.bank
 
 world.render
 
