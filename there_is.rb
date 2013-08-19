@@ -21,7 +21,7 @@ class ObjectDescription < LanguageDescription
   configure :length, [:short, :long]
   configure :size, [:large, :small]
   configure :width, [:wide, :narrow]
-  configure :terrain_type, [:rocky, :grassy]
+  configure :terrain_type, [:rock, :grass, :dirt]
 
   def road
     RoadDescription.new capture_properties

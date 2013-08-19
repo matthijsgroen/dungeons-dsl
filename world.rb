@@ -27,9 +27,8 @@ class World
 
   TILE_TYPES = {
     road: '#',
-    bank: '.',
-    grassy: '.',
-    rocky: ';',
+    grass: '.',
+    rock: ';',
     marker: '$'
   }
 

@@ -3,7 +3,7 @@ require './map_object'
 class FieldDescription < LanguageDescription
 
   configure :road_type, [:across]
-  configure :field_type, [:rocky, :grassy]
+  configure :field_type, [:rock, :grass]
 
   def initialize(properties)
     @properties = convert_properties properties
@@ -29,9 +29,7 @@ class FieldDescription < LanguageDescription
   private
 
   def convert_properties properties
-    p = {
-      edges: []
-    }
+    p = {}
     p[:size] = 6 + rand(10) if properties[:size] == :small
     p[:size] = 15 + rand(20) if properties[:size] == :large
     p[:field_type] = properties[:terrain_type]
@@ -44,10 +42,11 @@ class Field < MapObject
   def initialize world, configuration
     super world
     @configuration = configuration
+    @roads = []
   end
 
   def create
-    field_type = configuration[:field_type] || :grassy
+    field_type = configuration[:field_type] || :grass
     pos = configuration[:start_position]
     direction = configuration[:start_direction]
 
@@ -60,20 +59,36 @@ class Field < MapObject
       place_tiles(pos, rotate_direction(direction, -90), base + rand(f/4), field_type)
     end
 
-    ## Add road if indicated
-    road_configuration = {
-      start: configuration[:start_position],
-      length: f,
-      twist_factor: 2
-    }
-    case direction
-    when :north, :south then road_configuration[:vertical_direction] = direction
-    when :east, :west then road_configuration[:horizontal_direction] = direction
-    end
+    if configuration[:road]
+      road_configuration = {
+        start: configuration[:start_position],
+        length: f/4,
+        twist_factor: 4,
+        direction_bound: f/4,
+        general_direction: direction,
+        bank: {
+          width: :narrow,
+          type: field_type
+        }
+      }
 
-    road = Road.create world, road_configuration
-    configuration[:end] = road.configuration[:end]
-    configuration[:end_direction] = road.configuration[:end_direction]
+      road = Road.create(world, road_configuration)
+      road = Road.create(world, road_configuration.merge(
+        start: road.configuration[:end],
+        general_direction: direction,
+        direction_bound: 0
+      ))
+
+      @roads << Road.create(world, road_configuration.merge(
+        start: road.configuration[:end],
+        length: f/2,
+        direction_bound: f/4,
+        general_direction: pick_direction(direction)
+      ))
+
+      configuration[:end] = @roads.last.configuration[:end]
+      configuration[:end_direction] = @roads.last.configuration[:end_direction]
+    end
     self
   end
 

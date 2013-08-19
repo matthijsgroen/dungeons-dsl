@@ -16,10 +16,7 @@ class RoadDescription < LanguageDescription
   def connected(connector)
     object = connector.find
     @properties[:start] = object.configuration[:end]
-    case direction = object.configuration[:end_direction]
-    when :north, :south then @properties[:vertical_direction] = direction
-    when :west, :east then @properties[:horizontal_direction] = direction
-    end
+    @properties[:general_direction] = object.configuration[:end_direction]
     self
   end
 
@@ -48,29 +45,40 @@ class Road < MapObject
     @configuration = {
       start: [rand(500), rand(500)],
       length: 10 + rand(30),
-      vertical_direction: [:south, :north].sample,
-      horizontal_direction: [:east, :west].sample
+      general_direction: [:north, :east, :south, :west].sample
     }.merge configuration
-    @configuration[:twist_factor] ||= 1 + rand(@configuration[:length] / 4)
+    @configuration[:twist_factor] ||= 4 + rand(@configuration[:length] / 4)
+    if @configuration[:bank]
+      @configuration[:bank][:type] ||= :grass
+    end
   end
 
   def create
-    position = configuration[:start]
-    direction = pick_direction
+    start_position = configuration[:start]
+    position = start_position
+    general_direction = configuration[:general_direction]
+    direction = general_direction
     world.place_tile(position, :road)
+    index = 0
 
-    configuration[:length].times do |index|
+    while (movement_in_direction(start_position, position, general_direction) < configuration[:length]) do
+      index += 1
+
       old_direction = direction
-      direction = pick_direction if index % configuration[:twist_factor] == 0
+      direction = pick_direction(general_direction, direction) if (index % configuration[:twist_factor]) == 0
 
-      if old_direction != direction
+      if (old_direction != direction) and configuration[:bank]
         place_bank_around(position, direction)
-
         corner_position = move_direction(move_direction(position, old_direction), rotate_direction(direction, 180))
-        world.place_tile!(corner_position, :bank) if rand > 0.2
+        world.place_tile!(corner_position, configuration[:bank][:type]) if rand > 0.2
       end
 
-      position = move_direction(position, direction)
+      new_position = move_direction(position, direction)
+      unless in_bounds?(new_position, general_direction, start_position, configuration[:direction_bound])
+        direction = general_direction
+        new_position = move_direction(position, direction)
+      end
+      position = new_position
 
       place_bank_around position, direction
 
@@ -84,24 +92,17 @@ class Road < MapObject
   attr_reader :configuration
 
   private
-  def pick_direction
-    [
-      configuration[:vertical_direction],
-      configuration[:horizontal_direction]
-    ].sample
-  end
-
   def pick_bank_width
     {
-      narrow: rand(3),
+      narrow: 1 + rand(3),
       wide: 2 + rand(4)
     }[configuration[:bank][:width]]
   end
 
   def place_bank_around(position, direction)
     return unless configuration[:bank]
-    place_tiles(position, rotate_direction(direction, 90), pick_bank_width, :bank)
-    place_tiles(position, rotate_direction(direction, -90), pick_bank_width, :bank)
+    place_tiles(position, rotate_direction(direction, 90), pick_bank_width, configuration[:bank][:type])
+    place_tiles(position, rotate_direction(direction, -90), pick_bank_width, configuration[:bank][:type])
   end
 
 end
