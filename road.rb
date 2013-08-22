@@ -61,7 +61,7 @@ class Road < MapObject
     world.place_tile(position, :road)
     index = 0
 
-    while (movement_in_direction(start_position, position, general_direction) < configuration[:length]) do
+    until end_of_road?(position, configuration)
       index += 1
 
       old_direction = direction
@@ -92,6 +92,17 @@ class Road < MapObject
   attr_reader :configuration
 
   private
+  def end_of_road?(position, configuration)
+    if configuration[:length]
+      distance_in_direction = movement_in_direction(configuration[:start], position, configuration[:general_direction])
+      distance_in_direction >= configuration[:length]
+    elsif configuration[:area_bound]
+      # TODO: Test if current positon is within area
+      #movement_in_direction(configuration[:start], position, configuration[:general_direction]) >= 20
+      true
+    end
+  end
+
   def pick_bank_width
     {
       narrow: 1 + rand(3),

@@ -13,9 +13,9 @@ srand seed
 require './there_is'
 
 there is.a.short.road.with.a.wide.bank
-there is.a.small.field.with.a.road.across.connected to.this.road
-there is.a.long.road.with.a.narrow.bank.connected to.this.field
-there is.a.large.rock.field.with.road.across.connected to.this.road
+#there is.a.small.field.with.a.road.across.connected to.this.road
+#there is.a.long.road.with.a.narrow.bank.connected to.this.field
+there is.a.large.rock.field.with.a.forked.road.across.connected to.this.road
 
 world.render
 
