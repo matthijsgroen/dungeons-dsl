@@ -3,19 +3,6 @@ require './language'
 require './road'
 require './field'
 
-def there(object_description)
-  @objects ||= []
-  @objects << object_description.create(world)
-end
-
-def is
-  ObjectDescription.new
-end
-
-def to
-  ObjectConnector.new @objects
-end
-
 class ObjectDescription < LanguageDescription
 
   configure :length, [:short, :long]
@@ -32,37 +19,35 @@ class ObjectDescription < LanguageDescription
   end
 end
 
-class ObjectConnector
+class ObjectConnector < LanguageDescription
+
+  include ObjectFinder
+
+  configure :position, [:this, :last, :first]
+  chains :the, :of
 
   def initialize objects
+    super()
     @objects = objects
-    @properties = {}
-  end
-
-  def this
-    properties[:position] = :last
-    self
+    @nesting = []
   end
 
   def road
-    properties[:type] = Road
+    nesting << capture_properties.merge(type: Road)
+    reset_capture_properties
     self
   end
 
   def field
-    properties[:type] = Field
+    nesting << capture_properties.merge(type: Field)
+    reset_capture_properties
     self
   end
 
   def find
-    selection = objects
-    selection = selection.select { |i| i.is_a? properties[:type] } if properties[:type]
-
-    case properties[:position]
-    when :last then return selection.last
-    end
+    find_object nesting
   end
 
   private
-  attr_reader :properties, :objects
+  attr_reader :objects, :nesting
 end

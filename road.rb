@@ -96,10 +96,8 @@ class Road < MapObject
     if configuration[:length]
       distance_in_direction = movement_in_direction(configuration[:start], position, configuration[:general_direction])
       distance_in_direction >= configuration[:length]
-    elsif configuration[:area_bound]
-      # TODO: Test if current positon is within area
-      #movement_in_direction(configuration[:start], position, configuration[:general_direction]) >= 20
-      true
+    elsif area = configuration[:area_bound]
+      !area.contains? position
     end
   end
 

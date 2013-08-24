@@ -1,4 +1,6 @@
 require './map_object'
+require './area'
+require './object_finder'
 
 class FieldDescription < LanguageDescription
 
@@ -28,7 +30,6 @@ class FieldDescription < LanguageDescription
   end
 
   private
-
   def convert_properties properties
     p = {}
     p[:size] = 6 + rand(10) if properties[:size] == :small
@@ -39,11 +40,12 @@ class FieldDescription < LanguageDescription
 end
 
 class Field < MapObject
+  include ObjectFinder
 
   def initialize world, configuration
     super world
     @configuration = configuration
-    @roads = []
+    @objects = []
 
     @area = []
   end
@@ -51,7 +53,7 @@ class Field < MapObject
   def create
     field_type = configuration[:field_type] || :grass
     direction = configuration[:start_direction]
-    size = configuration[:size]
+    size = configuration[:size] || 6 + rand(20)
     area = Area.new(world, configuration[:start_position], size, direction)
     area.fill field_type
 
@@ -68,16 +70,16 @@ class Field < MapObject
         }
       }
 
-      road = Road.create(world, road_configuration)
       road = Road.create(world, road_configuration.merge(
-        start: road.configuration[:end],
-        general_direction: direction,
         direction_bound: 0
+      ))
+      road = Road.create(world, road_configuration.merge(
+        start: road.configuration[:end]
       ))
 
       road_direction = pick_direction(direction)
 
-      @roads << Road.create(world, road_configuration.merge(
+      objects << Road.create(world, road_configuration.merge(
         start: road.configuration[:end],
         length: nil,
         area_bound: area,
@@ -85,10 +87,15 @@ class Field < MapObject
         general_direction: road_direction
       ))
 
-      if configuration[:road_type] == :forked && false
-        new_direction = ([:north, :south, :east, :west] - [road_direction, opposite_direction(direction)]).sample
+      if configuration[:road_type] == :forked
+        directions_taken = [
+          road_direction,
+          opposite_direction(direction)
+        ]
+        directions_left = [:north, :south, :east, :west] - directions_taken
+        new_direction = directions_left.sample
 
-        @roads << Road.create(world, road_configuration.merge(
+        objects << Road.create(world, road_configuration.merge(
           start: road.configuration[:end],
           length: size/2,
           direction_bound: size/4,
@@ -96,47 +103,12 @@ class Field < MapObject
         ))
       end
 
-      configuration[:end] = @roads.last.configuration[:end]
-      configuration[:end_direction] = @roads.last.configuration[:end_direction]
+      configuration[:end] = objects.last.configuration[:end]
+      configuration[:end_direction] = objects.last.configuration[:end_direction]
     end
     self
   end
 
-  attr_reader :configuration
-
-  private
-
-  class Area < MapObject
-
-    def initialize world, start_position, size, direction
-      super(world)
-      @area = []
-      define_space start_position, size, direction
-    end
-
-    def fill field_type
-      @area.each do |part|
-        place_tiles(part[:start], part[:direction], part[:distance], field_type)
-      end
-    end
-
-    private
-    def define_space start_position, size, direction
-      side_a = rotate_direction(direction, 90)
-      side_b = rotate_direction(direction, -90)
-
-      size.times.each do |index|
-        pos = move_direction(start_position, direction, 1 + index)
-        base = (size/2) - (index - (size/2)).abs + 1
-
-        length_a = base + rand(size/4)
-        start = move_direction(pos, side_a, length_a)
-        length_b = base + rand(size/4)
-
-        @area << { start: start, direction: side_b, distance: length_a + length_b }
-      end
-    end
-
-  end
+  attr_reader :configuration, :objects
 
 end

@@ -1,6 +1,31 @@
 
-def world
-  @world ||= World.new
+def world name, &block
+  World.new.tap do |world|
+    WorldDSL.new(world).instance_eval(&block)
+  end
+end
+
+class WorldDSL
+
+  def initialize(world)
+    @world = world
+    @objects = []
+  end
+
+  def there(object_description)
+    @objects << object_description.create(world)
+  end
+
+  def is
+    ObjectDescription.new
+  end
+
+  def to
+    ObjectConnector.new @objects
+  end
+
+  private
+  attr_reader :world
 end
 
 class World
@@ -54,7 +79,6 @@ class World
   end
 
   private
-
   attr_reader :boundaries, :tiles
   def find_tile(position)
     tiles.find { |t| t[:position] == position }

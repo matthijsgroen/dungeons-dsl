@@ -30,4 +30,8 @@ class LanguageDescription
   protected
   attr_reader :capture_properties
 
+  def reset_capture_properties
+    @capture_properties = {}
+  end
+
 end
