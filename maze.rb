@@ -17,7 +17,9 @@ world('outside') do
   there is.a.field.with.a.forked.road.across.connected to.this.road
 
   there is.a.road.with.a.narrow.bank.connected to.the.last.road.of.this.field
-  #there is.a.small.field.with.a.road.across.connected to.this.road
-  there is.a.road.with.a.narrow.bank.connected to.the.first.road.of.this.field
+  there is.a.field.connected to.this.road
+
+  there is.a.long.road.with.a.wide.bank.connected to.the.first.road.of.the.first.field
+  there is.a.field.connected to.this.road
 end.render
 

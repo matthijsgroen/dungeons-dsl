@@ -110,8 +110,15 @@ class Road < MapObject
 
   def place_bank_around(position, direction)
     return unless configuration[:bank]
-    place_tiles(position, rotate_direction(direction, 90), pick_bank_width, configuration[:bank][:type])
-    place_tiles(position, rotate_direction(direction, -90), pick_bank_width, configuration[:bank][:type])
+    bank_type = configuration[:bank][:type]
+
+    bank_width1 = pick_bank_width
+    place_tiles(position, rotate_direction(direction, 90), bank_width1, bank_type)
+    world.place_decal(move_direction(position, rotate_direction(direction, 90), 1 + rand(bank_width1 - 1)), bank_type) if rand < 0.2
+
+    bank_width2 = pick_bank_width
+    place_tiles(position, rotate_direction(direction, -90), bank_width2, bank_type)
+    world.place_decal(move_direction(position, rotate_direction(direction, -90), 1 + rand(bank_width2 - 1)), bank_type) if rand < 0.2
   end
 
 end

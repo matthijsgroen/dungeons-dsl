@@ -14,14 +14,28 @@ class Area < MapObject
     end
   end
 
+  def populate_with_decals density, field_type
+    positions.each do |position|
+      world.place_decal(position, field_type) if rand < density
+    end
+  end
+
   def contains? position
+    positions.include? position
+  end
+
+  def positions
+    return @positions if @positions
+    @positions = []
     @area.each_with_index do |part|
       start_point = part[:start]
-      end_point = move_direction(start_point, part[:direction], part[:distance])
-
-      return true if between_points? start_point, end_point, position
+      @positions << start_point
+      part[:distance].times do |distance|
+        @positions << move_direction(start_point, part[:direction], distance)
+      end
     end
-    false
+    @positions.uniq!
+    @positions
   end
 
   private

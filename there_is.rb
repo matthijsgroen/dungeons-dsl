@@ -2,6 +2,7 @@ require './world'
 require './language'
 require './road'
 require './field'
+require './object_finder'
 
 class ObjectDescription < LanguageDescription
 

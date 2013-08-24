@@ -32,6 +32,7 @@ class World
 
   def initialize
     @tiles = []
+    @decals = []
     @boundaries = nil
   end
 
@@ -42,6 +43,7 @@ class World
   end
 
   def place_tile!(position, type)
+    clear_decal(position)
     if tile = find_tile(position)
       tile[:type] = type
     else
@@ -57,6 +59,14 @@ class World
     marker: '$'
   }
 
+  DECAL_TYPES = {
+    tree1: '^',
+    tree2: '*',
+    rock1: 'C',
+    rock2: 'c',
+    rock3: 'o'
+  }
+
   def render
     unless boundaries
       puts 'The world is empty'
@@ -67,8 +77,11 @@ class World
       line = ""
       for x in boundaries[:left]..boundaries[:right]
         tile = find_tile([x, y])
+        decal = find_decal([x, y])
 
-        if tile
+        if decal
+          line.concat DECAL_TYPES[decal[:type]]
+        elsif tile
           line.concat TILE_TYPES[tile[:type]]
         else
           line.concat " "
@@ -78,10 +91,35 @@ class World
     end
   end
 
+  def place_decal(position, ground_type, decal_type = nil)
+    world_tile = find_tile(position)
+    return unless world_tile
+    return if world_tile[:type] != ground_type
+
+    trees = [:tree1, :tree2]
+    rocks = [:rock1, :rock2, :rock3]
+
+    decal_type ||= case ground_type
+                 when :grass then (trees + rocks).sample
+                 end
+    return unless decal_type
+
+    decals << { position: position, type: decal_type }
+  end
+
   private
-  attr_reader :boundaries, :tiles
+  attr_reader :boundaries, :tiles, :decals
+
   def find_tile(position)
     tiles.find { |t| t[:position] == position }
+  end
+
+  def find_decal(position)
+    decals.find { |t| t[:position] == position }
+  end
+
+  def clear_decal(position)
+    decals.reject! { |t| t[:position] == position }
   end
 
   def update_boundaries position

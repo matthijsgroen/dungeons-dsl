@@ -56,6 +56,7 @@ class Field < MapObject
     size = configuration[:size] || 6 + rand(20)
     area = Area.new(world, configuration[:start_position], size, direction)
     area.fill field_type
+    area.populate_with_decals 0.2, field_type
 
     if configuration[:road]
       road_configuration = {
