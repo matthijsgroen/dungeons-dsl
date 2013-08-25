@@ -23,6 +23,16 @@ class LanguageDescription
         end
       end
     end
+
+    def collect(property, values)
+      values.each do |value|
+        define_method(value) do
+          capture_properties[property] ||= []
+          capture_properties[property] << value
+          self
+        end
+      end
+    end
   end
 
   chains :a, :an, :with

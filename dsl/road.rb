@@ -3,6 +3,8 @@ require './map_object'
 class RoadDescription < LanguageDescription
 
   configure :width, [:wide, :narrow]
+  collect :decals, [:trees, :rocks]
+  chains :in, :and
 
   def initialize(properties)
     @properties = convert_properties properties
@@ -47,7 +49,7 @@ class Road < MapObject
       length: 10 + rand(30),
       general_direction: [:north, :east, :south, :west].sample
     }.merge configuration
-    @configuration[:twist_factor] ||= 4 + rand(@configuration[:length] / 4)
+    @configuration[:twist_factor] ||= 2 + rand((3 + (@configuration[:length] || 5)) / 3)
     if @configuration[:bank]
       @configuration[:bank][:type] ||= :grass
     end
@@ -103,22 +105,25 @@ class Road < MapObject
 
   def pick_bank_width
     {
-      narrow: 1 + rand(3),
-      wide: 2 + rand(4)
+      narrow: 2 + rand(2),
+      wide: 4 + rand(4)
     }[configuration[:bank][:width]]
   end
 
   def place_bank_around(position, direction)
     return unless configuration[:bank]
     bank_type = configuration[:bank][:type]
+    decal_types = configuration[:bank][:decals] || []
 
     bank_width1 = pick_bank_width
-    place_tiles(position, rotate_direction(direction, 90), bank_width1, bank_type)
-    world.place_decal(move_direction(position, rotate_direction(direction, 90), 1 + rand(bank_width1 - 1)), bank_type) if rand < 0.2
+    dir1 = rotate_direction(direction, 90)
+    place_tiles(position, dir1, bank_width1, bank_type)
+    world.place_decal(move_direction(position, dir1, 1 + rand(bank_width1 - 1)), bank_type, decal_types) if rand < 0.2
 
     bank_width2 = pick_bank_width
-    place_tiles(position, rotate_direction(direction, -90), bank_width2, bank_type)
-    world.place_decal(move_direction(position, rotate_direction(direction, -90), 1 + rand(bank_width2 - 1)), bank_type) if rand < 0.2
+    dir2 = rotate_direction(direction, -90)
+    place_tiles(position, dir2, bank_width2, bank_type)
+    world.place_decal(move_direction(position, dir2, 1 + rand(bank_width2 - 1)), bank_type, decal_types) if rand < 0.2
   end
 
 end

@@ -14,9 +14,10 @@ class Area < MapObject
     end
   end
 
-  def populate_with_decals density, field_type
+  def populate_with_decals density, field_type, allowed_decal_types
+    return if allowed_decal_types.nil? or allowed_decal_types.empty?
     positions.each do |position|
-      world.place_decal(position, field_type) if rand < density
+      world.place_decal(position, field_type, allowed_decal_types) if rand < density
     end
   end
 

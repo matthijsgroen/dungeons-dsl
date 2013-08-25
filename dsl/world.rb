@@ -91,17 +91,21 @@ class World
     end
   end
 
-  def place_decal(position, ground_type, decal_type = nil)
+  def place_decal(position, ground_type, decal_types)
     world_tile = find_tile(position)
     return unless world_tile
     return if world_tile[:type] != ground_type
 
-    trees = [:tree1, :tree2]
-    rocks = [:rock1, :rock2, :rock3]
+    available_decals = {
+      trees: [:tree1, :tree2],
+      rocks: [:rock1, :rock2, :rock3]
+    }
 
-    decal_type ||= case ground_type
-                 when :grass then (trees + rocks).sample
-                 end
+    allowed_decals = available_decals.map do |key, value|
+      value if decal_types.include? key
+    end.flatten.compact
+
+    decal_type = allowed_decals.sample
     return unless decal_type
 
     decals << { position: position, type: decal_type }
