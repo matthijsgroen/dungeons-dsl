@@ -1,15 +1,34 @@
 require './world'
 require './language'
+require './object_finder'
+require './special'
 require './road'
 require './field'
-require './object_finder'
+
+# specials
+require './lightpost'
 
 class ObjectDescription < LanguageDescription
+
+  class << self
+    def special(klass)
+      name = klass.name.downcase
+      define_method(name) do
+        SpecialDescription.new(klass, capture_properties)
+      end
+      plural = "#{name}s"
+      define_method(plural) do
+        SpecialDescription.new(klass, capture_properties)
+      end
+    end
+  end
 
   configure :length, [:short, :long]
   configure :size, [:large, :small]
   configure :width, [:wide, :narrow]
   configure :terrain_type, [:rock, :grass, :dirt]
+  configure :amount, [:several]
+  special Lightpost
 
   def road
     RoadDescription.new capture_properties
@@ -18,6 +37,7 @@ class ObjectDescription < LanguageDescription
   def field
     FieldDescription.new capture_properties
   end
+
 end
 
 class ObjectConnector < LanguageDescription

@@ -6,7 +6,6 @@ class LanguageDescription
   end
 
   class << self
-
     def chains(*words)
       words.each do |word|
         define_method(word) do

@@ -19,10 +19,12 @@ class WorldDSL
   def is
     ObjectDescription.new
   end
+  alias :are :is
 
   def to
     ObjectConnector.new @objects
   end
+  alias :of :to
 
   private
   attr_reader :world

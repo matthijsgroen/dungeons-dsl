@@ -14,12 +14,16 @@ require './there_is'
 
 world('outside') do
   there is.a.road.with.rocks.and.trees.in.a.wide.bank
+  there is.a.lightpost.at.the.side of.this.road
+
   there is.a.field.with.trees.and.a.forked.road.across.connected to.this.road
 
   there is.a.road.with.a.narrow.bank.connected to.the.last.road.of.this.field
   there is.a.field.with.rocks.connected to.this.road
 
   there is.a.long.road.with.rocks.in.a.wide.bank.connected to.the.first.road.of.the.first.field
+  there are.several.lightposts.at.the.side of.this.road
+
   there is.a.large.field.with.trees.connected to.this.road
 end.render
 
