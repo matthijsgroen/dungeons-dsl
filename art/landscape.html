@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Landscape prototype</title>
+  <style>
+    #playfield {
+      width: 4000px;
+      height: 4000px;
+      border: 1px solid black;
+      background: url('sprites/grass.png');
+      position: relative;
+    }
+
+    #playfield > * {
+      position: absolute;
+    }
+
+    #rock {
+      height: 2600px;
+      width: 1600px;
+      top: 160px;
+      left: 160px;
+
+      background:
+        url('sprites/grass-rock-tl.png') no-repeat 0px 0px,
+        url('sprites/grass-rock-l.png') no-repeat 0px 40px,
+        url('sprites/grass-rock-bl.png') no-repeat 0px 80px,
+
+        url('sprites/grass-rock-t.png') no-repeat 40px 0px,
+        url('sprites/rock.png') no-repeat 40px 40px,
+        url('sprites/grass-rock-b.png') no-repeat 40px 80px
+
+        ;
+
+    }
+
+  </style>
+</head>
+<body>
+
+  <div id="playfield">
+
+    <div id="rock">
+      <!--
+
+             x   x
+        x x  x   xxx
+      xxxxxxxxxxxxxxxxx
+       xxxxxxxxxxxxxxxxx
+        x  xxx  xxxxxx
+        x   x   x   x
+      -->
+    </div>
+  </div>
+
+</body>
+</html>
