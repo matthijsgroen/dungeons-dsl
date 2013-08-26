@@ -1,15 +1,16 @@
-require './map_object'
+require_relative './language_description'
 
 class SpecialDescription < LanguageDescription
 
-  chains :at, :the
+  word_chain :at_the_side_of
 
   def initialize special_type, properties
+    super()
     @properties = properties
     @special_type = special_type
   end
 
-  def side(connector)
+  def at_the_side_of(connector)
     object = connector.find
     @properties[:connected_to_side_of] = object
     self
@@ -26,16 +27,4 @@ class SpecialDescription < LanguageDescription
       @special_type.create(world, @properties)
     end
   end
-end
-
-class Special < MapObject
-
-  def initialize(world, configuration)
-    super(world)
-    @object = configuration[:connected_to_side_of]
-  end
-
-  protected
-  attr_reader :object
-
 end

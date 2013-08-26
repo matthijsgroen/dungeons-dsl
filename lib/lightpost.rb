@@ -1,3 +1,4 @@
+require_relative './special'
 
 class Lightpost < Special
 

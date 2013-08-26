@@ -1,36 +1,12 @@
-
-def world name, &block
-  World.new.tap do |world|
-    WorldDSL.new(world).instance_eval(&block)
-  end
-end
-
-class WorldDSL
-
-  def initialize(world)
-    @world = world
-    @objects = []
-  end
-
-  def there(object_description)
-    @objects << object_description.create(world)
-  end
-
-  def is
-    ObjectDescription.new
-  end
-  alias :are :is
-
-  def to
-    ObjectConnector.new @objects
-  end
-  alias :of :to
-
-  private
-  attr_reader :world
-end
+require_relative 'dsl/world_description'
 
 class World
+
+  def self.create name, &block
+    new.tap do |world|
+      WorldDescription.new(world).instance_eval(&block)
+    end
+  end
 
   def initialize
     @tiles = []

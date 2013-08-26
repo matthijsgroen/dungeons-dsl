@@ -7,9 +7,9 @@ module ObjectFinder
     selection = selection.select { |i| i.is_a? query[:type] } if query[:type]
 
     object = case query[:position]
-    when :this then selection.last
     when :last then selection.last
     when :first then selection.first
+    when nil then selection.last
     end
 
     return object if nesting.empty?

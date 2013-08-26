@@ -1,12 +1,10 @@
-require './world'
-require './language'
-require './object_finder'
-require './special'
-require './road'
-require './field'
+require_relative './language_description'
+require_relative './road_description'
+require_relative './field_description'
+require_relative './special_description'
 
-# specials
-require './lightpost'
+# TODO Find a cleaner solution to inject 'specials'
+require_relative '../lightpost'
 
 class ObjectDescription < LanguageDescription
 
@@ -37,38 +35,4 @@ class ObjectDescription < LanguageDescription
   def field
     FieldDescription.new capture_properties
   end
-
-end
-
-class ObjectConnector < LanguageDescription
-
-  include ObjectFinder
-
-  configure :position, [:this, :last, :first]
-  chains :the, :of
-
-  def initialize objects
-    super()
-    @objects = objects
-    @nesting = []
-  end
-
-  def road
-    nesting << capture_properties.merge(type: Road)
-    reset_capture_properties
-    self
-  end
-
-  def field
-    nesting << capture_properties.merge(type: Field)
-    reset_capture_properties
-    self
-  end
-
-  def find
-    find_object nesting
-  end
-
-  private
-  attr_reader :objects, :nesting
 end
