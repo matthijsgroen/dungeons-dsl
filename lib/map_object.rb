@@ -1,4 +1,3 @@
-require_relative './vector'
 require_relative './direction'
 
 class MapObject
@@ -16,11 +15,11 @@ class MapObject
 
   def move_direction position, direction, amount = 1
     x, y = *position
-    case direction.name
-    when :east then x += amount
-    when :west then x -= amount
-    when :south then y += amount
-    when :north then y -= amount
+    delta = amount * direction.factor
+    if direction.vertical?
+      y += delta
+    else
+      x += delta
     end
     [x, y]
   end
@@ -51,13 +50,12 @@ class MapObject
   end
 
   def movement_in_direction(position1, position2, direction)
-    factor = case direction.name
-             when :north, :west then 1
-             when :south, :east then -1
-             end
-    case direction.name
-    when :north, :south then (position1[1] - position2[1]) * factor
-    when :west, :east then (position1[0] - position2[0]) * factor
+    x1, y1 = position1
+    x2, y2 = position2
+    if direction.vertical?
+     (y2 - y1) * direction.factor
+    else
+     (x2 - x1) * direction.factor
     end
   end
 end

@@ -3,8 +3,6 @@ class Direction
 
   CARDINAL_DIRECTIONS = [:north, :east, :south, :west]
 
-  attr_reader :name
-
   def self.pick
     new CARDINAL_DIRECTIONS.sample
   end
@@ -16,10 +14,6 @@ class Direction
 
   def initialize(name)
     @name = name
-  end
-
-  def == other
-    self.name == other.name
   end
 
   def rotate(degrees)
@@ -37,5 +31,31 @@ class Direction
   def opposite
     rotate(180)
   end
+
+  def == other
+    self.name == other.name
+  end
+
+  def factor
+    case name
+    when :north, :west then -1
+    when :south, :east then 1
+    end
+  end
+
+  def vertical?
+    case name
+    when :north, :south then true
+    else false
+    end
+  end
+
+  def horizontal?
+    !vertical?
+  end
+
+  attr_reader :name
+  def to_s; name.to_s; end
+  def inspect; "<#{self.class.name} #{to_s}>"; end
 
 end
