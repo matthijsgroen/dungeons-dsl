@@ -16,7 +16,7 @@ class MapObject
 
   def move_direction position, direction, amount = 1
     x, y = *position
-    case direction
+    case direction.name
     when :east then x += amount
     when :west then x -= amount
     when :south then y += amount
@@ -40,22 +40,22 @@ class MapObject
         suggested_direction
       end
     else
-      ([:north, :east, :south, :west] - [general_direction.opposite]).sample
+      Direction.pick_except general_direction.opposite
     end
   end
 
   def in_bounds?(position, general_direction, start, limit)
     return true unless limit
-    diff = movement_in_direction start, position, general_direction.rotate(90)
+    diff = movement_in_direction(start, position, general_direction.rotate(90))
     diff.abs < limit
   end
 
   def movement_in_direction(position1, position2, direction)
-    factor = case direction
+    factor = case direction.name
              when :north, :west then 1
              when :south, :east then -1
              end
-    case direction
+    case direction.name
     when :north, :south then (position1[1] - position2[1]) * factor
     when :west, :east then (position1[0] - position2[0]) * factor
     end

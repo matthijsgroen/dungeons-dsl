@@ -9,6 +9,7 @@ class Lightpost < Special
   def create
     # TODO: Determine position along the road
     puts "creating #{self.class.name} along a #{object.class.name}"
+    object.position_along(rand, [:left, :right].sample)
   end
 
 end

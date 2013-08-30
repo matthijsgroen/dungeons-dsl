@@ -7,7 +7,7 @@ class Road < MapObject
     @configuration = {
       start: [rand(500), rand(500)],
       length: 10 + rand(30),
-      general_direction: [:north, :east, :south, :west].sample
+      general_direction: Direction.pick
     }.merge configuration
     @configuration[:twist_factor] ||= 2 + rand((3 + (@configuration[:length] || 5)) / 3)
     if @configuration[:bank]
@@ -49,6 +49,10 @@ class Road < MapObject
     configuration[:end] = position
     configuration[:end_direction] = direction
     self
+  end
+
+  def position_along(percentage, side_of_road)
+
   end
 
   attr_reader :configuration

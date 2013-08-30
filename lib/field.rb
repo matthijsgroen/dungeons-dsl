@@ -56,8 +56,7 @@ class Field < MapObject
           road_direction,
           direction.opposite
         ]
-        directions_left = [:north, :south, :east, :west] - directions_taken
-        new_direction = directions_left.sample
+        new_direction = Direction.pick_except directions_taken
 
         objects << Road.create(world, road_configuration.merge(
           start: road.configuration[:end],

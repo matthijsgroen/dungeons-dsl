@@ -2,13 +2,13 @@ require_relative './direction'
 
 class Vector
 
-  def initialize position, direction
-    @position, @direction = position, direction
+  def initialize position, direction, amount = 1
+    @position, @direction, @amount = position, direction, amount
   end
 
   def move amount = 1
     x, y = *position
-    case direction
+    case direction.name
     when :east then x += amount
     when :west then x -= amount
     when :south then y += amount
@@ -25,8 +25,8 @@ class Vector
     self.class.new position, new_direction
   end
 
-  def reverse
-    change_direction direction.reverse
+  def opposite
+    change_direction direction.opposite
   end
 
   attr_reader :position, :direction
