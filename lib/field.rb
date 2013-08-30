@@ -54,7 +54,7 @@ class Field < MapObject
       if configuration[:road_type] == :forked
         directions_taken = [
           road_direction,
-          opposite_direction(direction)
+          direction.opposite
         ]
         directions_left = [:north, :south, :east, :west] - directions_taken
         new_direction = directions_left.sample

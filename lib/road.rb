@@ -31,7 +31,7 @@ class Road < MapObject
 
       if (old_direction != direction) and configuration[:bank]
         place_bank_around(position, direction)
-        corner_position = move_direction(move_direction(position, old_direction), rotate_direction(direction, 180))
+        corner_position = move_direction(move_direction(position, old_direction), direction.opposite)
         world.place_tile!(corner_position, configuration[:bank][:type]) if rand > 0.2
       end
 
@@ -76,12 +76,12 @@ class Road < MapObject
     decal_types = configuration[:bank][:decals] || []
 
     bank_width1 = pick_bank_width
-    dir1 = rotate_direction(direction, 90)
+    dir1 = direction.rotate 90
     place_tiles(position, dir1, bank_width1, bank_type)
     world.place_decal(move_direction(position, dir1, 1 + rand(bank_width1 - 1)), bank_type, decal_types) if rand < 0.2
 
     bank_width2 = pick_bank_width
-    dir2 = rotate_direction(direction, -90)
+    dir2 = direction.rotate(-90)
     place_tiles(position, dir2, bank_width2, bank_type)
     world.place_decal(move_direction(position, dir2, 1 + rand(bank_width2 - 1)), bank_type, decal_types) if rand < 0.2
   end

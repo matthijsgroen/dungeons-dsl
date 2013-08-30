@@ -51,8 +51,8 @@ class Area < MapObject
   end
 
   def define_space start_position, size, direction
-    side_a = rotate_direction(direction, 90)
-    side_b = rotate_direction(direction, -90)
+    side_a = direction.rotate 90
+    side_b = direction.rotate(-90)
 
     size.times.each do |index|
       pos = move_direction(start_position, direction, 1 + index)

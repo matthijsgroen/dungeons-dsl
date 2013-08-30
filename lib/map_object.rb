@@ -1,3 +1,6 @@
+require_relative './vector'
+require_relative './direction'
+
 class MapObject
 
   def self.create(world, configuration)
@@ -22,24 +25,6 @@ class MapObject
     [x, y]
   end
 
-  def rotate_direction(direction, degrees)
-    directions = [:east, :south, :west, :north]
-    start = directions.index direction
-    compass = {
-      0 => directions[start],
-      90 => directions[(start + 1) % 4],
-      180 => directions[(start + 2) % 4],
-      270 => directions[(start + 3) % 4]
-    }
-
-    compass[(360 + degrees) % 360]
-  end
-
-  def opposite_direction direction
-    return nil unless direction
-    rotate_direction(direction, 180)
-  end
-
   def place_tiles(position, direction, amount, type)
     amount.times do |index|
       world.place_tile(move_direction(position, direction, index), type)
@@ -48,20 +33,20 @@ class MapObject
 
   def pick_direction(general_direction = nil, direction = nil)
     if direction
-      suggested_direction = rotate_direction(direction, [0, 90, -90].sample)
-      if suggested_direction == opposite_direction(general_direction)
+      suggested_direction = direction.rotate [0, 90, -90].sample
+      if suggested_direction == general_direction.opposite
         general_direction
       else
         suggested_direction
       end
     else
-      ([:north, :east, :south, :west] - [opposite_direction(general_direction)]).sample
+      ([:north, :east, :south, :west] - [general_direction.opposite]).sample
     end
   end
 
   def in_bounds?(position, general_direction, start, limit)
     return true unless limit
-    diff = movement_in_direction start, position, rotate_direction(general_direction, 90)
+    diff = movement_in_direction start, position, general_direction.rotate(90)
     diff.abs < limit
   end
 
