@@ -42,7 +42,8 @@ class World
     tree2: '*',
     rock1: 'C',
     rock2: 'c',
-    rock3: 'o'
+    rock3: 'o',
+    lamp_post1: '%'
   }
 
   def render
@@ -72,11 +73,12 @@ class World
   def place_decal(position, ground_type, decal_types)
     world_tile = find_tile(position)
     return unless world_tile
-    return if world_tile[:type] != ground_type
+    return if !ground_type.nil? and world_tile[:type] != ground_type
 
     available_decals = {
       trees: [:tree1, :tree2],
-      rocks: [:rock1, :rock2, :rock3]
+      rocks: [:rock1, :rock2, :rock3],
+      lamp_post: [:lamp_post1]
     }
 
     allowed_decals = available_decals.map do |key, value|
@@ -87,6 +89,11 @@ class World
     return unless decal_type
 
     decals << { position: position, type: decal_type }
+  end
+
+  def place_decal!(position, ground_type, decal_types)
+    clear_decal(position)
+    place_decal(position, ground_type, decal_types)
   end
 
   private

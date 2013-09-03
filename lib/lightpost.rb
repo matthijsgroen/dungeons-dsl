@@ -7,9 +7,8 @@ class Lightpost < Special
   end
 
   def create
-    # TODO: Determine position along the road
-    puts "creating #{self.class.name} along a #{object.class.name}"
-    object.position_along(rand, [:left, :right].sample)
+    position = object.position_along(rand, [-90, 90].sample)
+    world.place_decal!(position, nil, [:lamp_post])
   end
 
 end

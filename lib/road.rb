@@ -13,6 +13,7 @@ class Road < MapObject
     if @configuration[:bank]
       @configuration[:bank][:type] ||= :grass
     end
+    @vectors = []
   end
 
   def create
@@ -20,7 +21,8 @@ class Road < MapObject
     position = start_position
     general_direction = configuration[:general_direction]
     direction = general_direction
-    world.place_tile(position, :road)
+
+    add_position(position, direction)
     index = 0
 
     until end_of_road?(position, configuration)
@@ -44,20 +46,36 @@ class Road < MapObject
 
       place_bank_around position, direction
 
-      world.place_tile!(position, :road)
+      add_position(position, direction)
     end
+
+    place_road
+
     configuration[:end] = position
     configuration[:end_direction] = direction
     self
   end
 
   def position_along(percentage, side_of_road)
-
+    vector = vectors[(vectors.length * percentage).round]
+    move_direction(vector[:position], vector[:direction].rotate(side_of_road))
   end
 
   attr_reader :configuration
 
   private
+  attr_reader :vectors
+
+  def add_position(position, direction)
+    vectors << { position: position, direction: direction }
+  end
+
+  def place_road
+    vectors.each do |vector|
+      world.place_tile!(vector[:position], :road)
+    end
+  end
+
   def end_of_road?(position, configuration)
     if configuration[:length]
       distance_in_direction = movement_in_direction(configuration[:start], position, configuration[:general_direction])
