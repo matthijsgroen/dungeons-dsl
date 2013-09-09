@@ -7,17 +7,25 @@ class Field < MapObject
 
   def initialize world, configuration
     super world
-    @configuration = configuration
+    @configuration = {
+      field_type: :grass,
+      start_direction: Direction.pick,
+      start_position: [rand(500), rand(500)],
+      size: 6 + rand(20)
+    }.merge configuration
+
     @objects = []
 
     @area = []
   end
 
   def create
-    field_type = configuration[:field_type] || :grass
+    field_type = configuration[:field_type]
     direction = configuration[:start_direction]
-    size = configuration[:size] || 6 + rand(20)
-    area = Area.new(world, configuration[:start_position], size, direction)
+    start_position = configuration[:start_position]
+    size = configuration[:size]
+
+    area = Area.new(world, start_position, size, direction)
     area.fill field_type
     area.populate_with_decals 0.1, field_type, configuration[:decals]
 
@@ -68,6 +76,9 @@ class Field < MapObject
 
       configuration[:end] = objects.last.configuration[:end]
       configuration[:end_direction] = objects.last.configuration[:end_direction]
+    else
+      configuration[:end] = move_direction(configuration[:start_position], configuration[:start_direction], configuration[:size])
+      configuration[:end_direction] = configuration[:start_direction]
     end
     self
   end

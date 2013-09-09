@@ -35,7 +35,7 @@ class FieldDescription < LanguageDescription
     p = {}
     p[:size] = 6 + rand(10) if properties[:size] == :small
     p[:size] = 15 + rand(20) if properties[:size] == :large
-    p[:field_type] = properties[:terrain_type]
+    p[:field_type] = properties[:terrain_type] if properties[:terrain_type]
     p
   end
 end

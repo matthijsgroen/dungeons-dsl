@@ -12,6 +12,22 @@ srand seed
 
 require './world'
 
+#World.create('start area') do
+  #there is.a.small.field
+  #there is.a.short.road.with.a.narrow.bank.connected.to the.field
+  #there are.rocks.at the.side.of.the.road
+
+  #there is.a.field.connected.to the.road
+  ## describe encounter / link to encounter:
+  ## This could be an entirely different DSL, based on creatures.
+  ## the same can be said for Loot.
+  ##
+  ## there is.a.crew_survivor.at.the.entrance.of the.field
+  ##
+  ## there are.two.creatures.killing the.crew_survivor
+  ##
+#end.render
+
 World.create('outside') do
   there is.a.road.with.rocks.and.trees.in.a.wide.bank
   there is.a.lightpost.at.the.side.of the.road

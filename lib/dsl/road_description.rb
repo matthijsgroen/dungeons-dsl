@@ -7,7 +7,7 @@ class RoadDescription < LanguageDescription
   collect :decals, [:trees, :rocks]
   chains :in, :and
 
-  word_chain :connected_to
+  word_chain :connected_to, :leading_from
 
   def initialize(properties)
     @properties = convert_properties properties
